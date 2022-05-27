@@ -13,6 +13,8 @@ export class TodoListRenderer extends Renderer<TodoItem[]> {
     // Facade 
     render(data: TodoItem[]) {
         const listEl = document.createElement("ul")
+        listEl.className = "list-group"
+
         this._todoRenderer.container = listEl
 
         super.resetContainer()

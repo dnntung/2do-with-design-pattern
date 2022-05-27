@@ -15,7 +15,7 @@ export class TodoController {
         this._observerManager = new ObserverManager()
         try {
             const storageItems: any[] = JSON.parse(localStorage.getItem("todo_items")) || []
-            this.todoItems =  storageItems.map(item => new TodoItem(item._id, item._title, item._desc))
+            this._todoItems =  storageItems.map(item => new TodoItem(item._id, item._title, item._desc))
         }
         catch(err) {
             this._todoItems = []
@@ -24,6 +24,7 @@ export class TodoController {
 
     set renderer(renderer: TodoListRenderer) {
         this._observerManager.subscribe(new TodoObserver(renderer))
+        this._observerManager.notify(this._todoItems)
     }
 
     get todoItems() {
@@ -46,6 +47,12 @@ export class TodoController {
 
     createTodo(title: string, desc: string) {
         this._todoItems.push(new TodoItem(this._todoItems.length, title, desc))
+        this._observerManager.notify(this._todoItems)
+    }
+
+    completeTodo(id: number, completed: boolean) {
+        const todoItem: TodoItem = this._todoItems.find(item => item.id === id)
+        todoItem.completed = completed
         this._observerManager.notify(this._todoItems)
     }
 
