@@ -5,6 +5,10 @@ export class ObserverManager {
     // Observer
     private  _observers:  Observer[]
 
+    constructor() {
+        this._observers = []
+    }
+
     subscribe( observer: Observer) {
         this._observers.push(observer)
 
@@ -16,7 +20,6 @@ export class ObserverManager {
 
     notify(data: any) {
         this._observers.map(o => o.update(data))
-        
     }
 }
     

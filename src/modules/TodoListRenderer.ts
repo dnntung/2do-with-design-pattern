@@ -2,19 +2,34 @@ import { Renderer } from "../interfaces/Renderer"
 import { TodoItem } from "./Todo"
 import { TodoItemRenderer } from "./TodoItemRenderer"
 
-export class TodoListRenderer implements Renderer<TodoItem[]> {
-    private _todoRenderer: TodoItemRenderer = new TodoItemRenderer()
+export class TodoListRenderer extends Renderer<TodoItem[]> {
+    private _todoRenderer: TodoItemRenderer
+
+    constructor() {
+        super()
+        this._todoRenderer =new TodoItemRenderer()
+    }
     
     // Facade 
-    render(data: TodoItem[]): Node {
-        const container = document.createElement("ul")
+    render(data: TodoItem[]) {
+        const listEl = document.createElement("ul")
+        this._todoRenderer.container = listEl
 
-        data.map((item: TodoItem) => container.appendChild(this._renderTodoItem(item)))
+        super.resetContainer()
 
-        return 
+        console.log("Rendering items...")
+        
+        data.map((item: TodoItem) => {
+            this._renderTodoItem(item)
+        })
+
+        console.log("Adding items to container...")
+        this.container.appendChild(listEl)
+
+        console.log("Done render items...")
     }
 
-    private _renderTodoItem(item: TodoItem): Node {
-        return this._todoRenderer.render(item)
+    private _renderTodoItem(item: TodoItem)  {
+        this._todoRenderer.render(item)
     }
 }

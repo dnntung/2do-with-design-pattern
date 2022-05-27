@@ -1,27 +1,36 @@
-import { HistorySnapshot } from "./History";
+import { Renderer } from "../interfaces/Renderer";
+import { TodoHistorySnapshot } from "./History";
 import { ObserverManager } from "./ObserverManager";
 import { TodoItem } from "./Todo";
-import { TodoListener } from "./TodoListener";
+import { TodoListRenderer } from "./TodoListRenderer";
 import { TodoObserver } from "./TodoObserver";
 
 export class TodoController {
     private _todoItems: TodoItem[];
     private static _controller: TodoController;
-    private _history: HistorySnapshot
+    private _history: TodoHistorySnapshot
     private _observerManager: ObserverManager;
 
     constructor() {
+        this._observerManager = new ObserverManager()
         try {
-            this._todoItems = JSON.parse(localStorage.getItem("todo_items"))
+            const storageItems: any[] = JSON.parse(localStorage.getItem("todo_items")) || []
+            this.todoItems =  storageItems.map(item => new TodoItem(item._id, item._title, item._desc))
         }
         catch(err) {
             this._todoItems = []
         }
-
-        this._observerManager.subscribe(new TodoObserver())
     }
 
-    setTodoItems(todoItems: TodoItem[]) {
+    set renderer(renderer: TodoListRenderer) {
+        this._observerManager.subscribe(new TodoObserver(renderer))
+    }
+
+    get todoItems() {
+        return this._todoItems
+    }
+
+    set todoItems(todoItems: TodoItem[]) {
         this._todoItems = todoItems
         this._observerManager.notify(this._todoItems)
     }
@@ -37,7 +46,7 @@ export class TodoController {
 
     createTodo(title: string, desc: string) {
         this._todoItems.push(new TodoItem(this._todoItems.length, title, desc))
-         this._observerManager.notify(this._todoItems)
+        this._observerManager.notify(this._todoItems)
     }
 
     editTodo(id: number, title: string, desc: string) {
@@ -53,7 +62,7 @@ export class TodoController {
 
     // Memento 
     saveHistory() {
-        this._history =  new HistorySnapshot(this, this._todoItems)
+        this._history =  new TodoHistorySnapshot(this, this._todoItems)
     }
 
     rollbackFromHistory() {
