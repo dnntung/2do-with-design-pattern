@@ -20,23 +20,31 @@ export class TodoItem  {
         return this._id
     }
 
+    get title() {
+        return this._title
+    }
+
+    get desc() {
+        return this._desc
+    }
+
     get completed() {
         return this._completed
     }
 
     set title(title: string) {
-        this.title = title
+        this._title = title
     }
 
     set desc(desc: string) {
-        this.desc = desc
+        this._desc = desc
     }
 
     set completed(completed: boolean) {
          this._completed = completed
     }
 
-    updateTodoItem(title: string, desc: string) {
+    update(title: string, desc: string) {
         this._title = title
         this._desc = desc
         this._updatedAt = new Date()
